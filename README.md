@@ -62,7 +62,7 @@ Dependencias clave: `torch`, `open_clip_torch`, `transformers`, `datasets`, `fai
 
 ### Paso 1 — C9: baseline OpenCLIP sobre el bootstrap de Flickr30k
 ```bash
-cd Semana4/
+cd Semana4/Proyecto/scripts
 python scripts/02_build_embeddings.py \
   --metadata-csv data/bootstrap_flickr30k/metadata.csv \
   --model-name ViT-B-32 --pretrained laion2b_s34b_b79k
