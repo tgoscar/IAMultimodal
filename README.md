@@ -2,33 +2,29 @@
 ## Defensa técnica: CLIP (Radford et al., 2021 — arXiv:2103.00020)
 
 **Estudiante:** Oscar Benito Toledo Guerrero
-**Tema asignado:** CLIP — Contrastive Language-Image Pre-training
-**Cuadernos del curso utilizados:** C6, C9, C10
-**Tesis defendida en la Evaluación 1:** el dual-encoder contrastivo es una arquitectura escalable para transferencia zero-shot y recuperación imagen-texto.
+**Cuadernos del curso usados como base:** C6, C9, C10
+**Tesis (Evaluación 1):** el dual-encoder contrastivo es una arquitectura escalable para transferencia zero-shot y recuperación imagen-texto.
+
+Este repositorio contiene **tres cuadernos propios**, construidos adaptando las partes relevantes de los
+cuadernos del curso. Cada cuaderno abre con su **tabla de trazabilidad**: de qué celda de C6/C9/C10
+proviene cada sección y qué se cambió (responde directamente a las preguntas 2, 3 y 4 de la sección 7 del enunciado).
 
 ---
 
-## 1. Contenido del repositorio
+## Estructura
 
 ```
-repo-examen-parcial-clip/
-├── README.md                  ← este archivo (instrucciones de reproducción)
-├── trazabilidad.md            ← hoja de trazabilidad exigida en la sección 10 del examen
+repo-parcial-clip/
+├── README.md
+├── trazabilidad.md              ← hoja exigida en la sección 10 del enunciado
+├── requirements.txt
 ├── notebooks/
-│   ├── Cuaderno6-MCC225.ipynb   ← bi-encoder contrastivo + re-ranking (Flickr8k)
-│   ├── Cuaderno9-MCC225.ipynb   ← OpenCLIP baseline, retrieval, hard negatives (Flickr30k bootstrap)
-│   └── Cuaderno10-MCC225.ipynb  ← zero-shot, prompt ensembles, checkpoints, FAISS
-├── evidencias/
-│   ├── metricas/        ← CSVs de Recall@K, accuracy zero-shot, comparación de checkpoints
-│   ├── graficos/        ← curvas de pérdida, galerías de retrieval, matriz de confusión
-│   ├── rankings/        ← top-k de recuperación cruzada (i2t y t2i)
-│   ├── hard_negatives/  ← pares incorrectos con score alto (salida de mine_hard_negatives)
-│   └── zeroshot/        ← predicciones y resumen por prompt/ensemble
-├── scripts_extras/      ← modificaciones propias sobre los cuadernos originales
-│   ├── prompt_ensemble.py
-│   ├── recall_at_k.py
-│   ├── comparar_checkpoints.py
-│   └── normalizar_y_similitud.py
+│   ├── CuadernoA_clip_embeddings_retrieval.ipynb
+│   ├── CuadernoB_zeroshot_prompts_checkpoints.ipynb
+│   └── CuadernoC_biencoder_vs_clip_reranking.ipynb
+├── outputs/                     ← embeddings .npz (lo genera el Cuaderno A)
+├── evidencias/                  ← CSVs y PNGs (los generan los cuadernos automáticamente)
+│   ├── metricas/  graficos/  rankings/  hard_negatives/  zeroshot/
 └── defensa/
     ├── guion_defensa_13min.md
     ├── respuestas_clip_seccion_8_2.md
@@ -36,93 +32,40 @@ repo-examen-parcial-clip/
     └── mejoras_codigo_en_vivo.md
 ```
 
-> **Importante antes del examen:** las carpetas de `evidencias/` deben llenarse con
-> **tus salidas reales** al ejecutar los cuadernos (CSVs de `outputs/metrics/`,
-> capturas de gráficos, etc.). Los archivos `RESULTADOS_AQUI.md` indican qué va en cada una.
+## Qué hace cada cuaderno
 
----
+| Cuaderno | Base | Contenido | Evidencia que produce |
+|---|---|---|---|
+| **A — Embeddings y retrieval** | C9 + C6 | OpenCLIP `ViT-B-32/laion2b`, embeddings normalizados, matriz de similitud, **Recall@{1,5,10}** i2t/t2i, recuperación cruzada, **hard negatives**, retrieval **multicaption** (C10 §3) | `retrieval_recall.csv`, `hard_negatives.csv`, galerías top-k, `embeddings_flickr8k.npz` |
+| **B — Zero-shot y prompts** | C10 | Clasificador zero-shot construido con prompts, **prompt único vs ensemble**, matriz de confusión, separación aciertos/errores, **comparación de checkpoints** (laion2b vs openai), búsqueda semántica (FAISS con fallback numpy) | `zeroshot_prompt_summary.csv`, `matriz_confusion.csv`, `checkpoint_comparison.csv`, `busqueda_semantica.csv` |
+| **C — Bi-encoder vs CLIP** | C6 | **InfoNCE simétrica de CLIP entrenada en vivo** (bi-encoder didáctico), negativos semi-duros, tabla comparativa bi-encoder vs CLIP preentrenado (mismo test set), **re-ranking del top-k** | `biencoder_vs_clip.csv`, `rerank_topk.csv`, curva de pérdida |
 
-## 2. Entorno y dependencias
-
-Los cuadernos C9 y C10 están diseñados para el contenedor Docker del curso con una GPU local.
+## Reproducción
 
 ```bash
-# Dentro del contenedor del curso
-pip install -r requirements-extra.txt        # open_clip_torch, faiss-cpu, etc.
-python scripts/00_verify_env.py              # verifica PyTorch, CUDA, GPU y open_clip
+pip install -r requirements.txt
+
+# Orden obligatorio: A genera los embeddings que B y C consumen
+jupyter nbconvert --execute --to notebook --inplace notebooks/CuadernoA_clip_embeddings_retrieval.ipynb
+jupyter nbconvert --execute --to notebook --inplace notebooks/CuadernoB_zeroshot_prompts_checkpoints.ipynb
+jupyter nbconvert --execute --to notebook --inplace notebooks/CuadernoC_biencoder_vs_clip_reranking.ipynb
 ```
 
-Dependencias clave: `torch`, `open_clip_torch`, `transformers`, `datasets`, `faiss`, `pandas`, `matplotlib`.
+Notas de entorno:
+- Dataset: `jxie/flickr8k` vía HuggingFace (el mismo de C6); se descarga automáticamente la primera vez.
+- Pesos: OpenCLIP descarga los checkpoints a `~/.cache` la primera vez (requiere red).
+- GPU recomendada (contenedor Docker del curso). En CPU: bajar `N_IMAGES` en A/B y `MAX_TRAIN` en C.
+- `N_IMAGES` (A y B) y `N_TEST` (C) deben coincidir — los cuadernos lo verifican con un `assert`.
+- Todos los CSVs y PNGs de evidencia se escriben solos en `evidencias/`.
 
-**Checkpoint baseline:** `ViT-B-32` con pesos `laion2b_s34b_b79k` (definido en `configs/local.yaml`).
+## Dónde está la celda clave de cada resultado
 
----
+- **Recall@K del dual encoder:** Cuaderno A, celda marcada `# 3. CELDA CLAVE` (`sim = image_features @ text_features.T` + `recall_at_k`).
+- **Zero-shot con prompts/ensemble:** Cuaderno B, celda `# 3. CELDA CLAVE` (`class_embeddings` con re-normalización tras el promedio).
+- **InfoNCE = pérdida de CLIP:** Cuaderno C, función `contrastive_loss` (cross-entropy simétrica sobre la diagonal, temperatura 0.07).
+- **Brecha de escala (tesis):** Cuaderno C, celda `# 6. CELDA CLAVE` (tabla bi-encoder didáctico vs CLIP).
 
-## 3. Reproducción mínima (orden de ejecución)
+## Limitación y mejora (resumen)
 
-### Paso 1 — C9: baseline OpenCLIP sobre el bootstrap de Flickr30k
-```bash
-cd Semana4/Proyecto/scripts
-python scripts/02_build_embeddings.py \
-  --metadata-csv data/bootstrap_flickr30k/metadata.csv \
-  --model-name ViT-B-32 --pretrained laion2b_s34b_b79k
-```
-Esto genera `outputs/embeddings/bootstrap_embeddings.npz` (embeddings de imagen y texto **ya normalizados L2**).
-Luego, en el notebook `Cuaderno9-MCC225.ipynb`:
-- la celda `sim = image_features @ text_features.T` produce la **matriz de similitud**,
-- `summarize_ranking(sim)` y `summarize_ranking(sim.T)` producen **Recall@K** en ambas direcciones (i2t y t2i),
-- `mine_hard_negatives(sim, metadata, top_n=8)` produce la evidencia de **negativos duros**.
-
-### Paso 2 — C10: zero-shot, prompt ensembles y comparación de checkpoints
-```bash
-python scripts/04_eval_zeroshot.py \
-  --embeddings outputs/embeddings/bootstrap_embeddings.npz \
-  --metadata-csv data/bootstrap_flickr30k/metadata.csv \
-  --prompt-config data/bootstrap_flickr30k/prompt_config.json
-
-python scripts/05_compare_checkpoints.py     # genera outputs/metrics/checkpoint_comparison.csv
-python scripts/06_build_faiss_index.py       # genera outputs/faiss/query_results.csv
-```
-El notebook `Cuaderno10-MCC225.ipynb` consume estos outputs: retrieval **multicaption**
-(`compute_similarity_matrix` + métricas i2t/t2i), resumen zero-shot por prompt, matriz de confusión y búsqueda FAISS.
-
-### Paso 3 — C6: bi-encoder entrenado desde cero + re-ranker (contraste conceptual con CLIP)
-Ejecutar `Cuaderno6-MCC225.ipynb` de inicio a fin (Flickr8k vía HuggingFace `jxie/flickr8k`;
-en CPU usar `fast_dev_run` y subconjuntos reducidos según la sección "Orientación de uso").
-Produce: métricas del bi-encoder contrastivo (InfoNCE), métricas del cross-reranker y la tabla comparativa final.
-
-### Paso 4 — Escalar más allá del bootstrap (opcional, mostrado como mejora)
-```bash
-python scripts/01_prepare_flickr30k_from_hf.py \
-  --output-root data/processed/flickr30k_hf \
-  --train-limit 512 --val-limit 128 --test-limit 128
-```
-y repetir Pasos 1–2 cambiando el CSV de entrada.
-
----
-
-## 4. Relación resultado ↔ paper ↔ cuadernos
-
-| Concepto del paper CLIP | Dónde se verifica en el código |
-|---|---|
-| Dual encoder (dos torres independientes) | C6: `TextTower`/torre visual del `ContrastiveBiEncoder`; C9: `model.encode_image` / `encode_texts` de OpenCLIP |
-| Pérdida contrastiva InfoNCE (simétrica) | C6: entrenamiento del bi-encoder (`train_biencoder`) |
-| Similitud coseno como producto interno de embeddings normalizados | C9 celda `sim = image_features @ text_features.T`; C10 `compute_similarity_matrix` |
-| Zero-shot vía prompts ("a photo of a {label}") | C10 sección 4 + `prompt_config.json` + `04_eval_zeroshot.py` |
-| Prompt engineering / ensembles | C10: `zeroshot_prompt_summary.csv` compara plantillas y ensemble |
-| Escala y checkpoints (WIT → LAION) | C10 sección 5: `05_compare_checkpoints.py` |
-| Limitación del dual encoder en interacción fina | C6: re-ranker cross-encoder mejora el ranking top-k del bi-encoder |
-| Retrieval como sistema real | C10 sección 6: índice FAISS |
-
----
-
-## 5. Limitación encontrada y mejora propuesta (resumen)
-
-- **Limitación:** las métricas se calculan sobre un *bootstrap* pequeño de Flickr30k; los intervalos de
-  confianza de Recall@K son amplios y los hard negatives muestran que el dual encoder no discrimina
-  composición fina (orden sujeto-objeto, conteo).
-- **Mejora:** (1) escalar al subconjunto de 512/128/128 con `01_prepare_flickr30k_from_hf.py` y reportar
-  Recall@K con desviación entre seeds; (2) añadir re-ranking cross-encoder (C6) sobre el top-k del
-  dual encoder, midiendo el trade-off costo/Recall@1.
-
-Detalle completo en `defensa/` y en `trazabilidad.md`.
+- **Limitación:** subconjuntos pequeños → varianza alta en Recall@K; etiquetas zero-shot derivadas por keyword son ruidosas; el bi-encoder didáctico está sub-entrenado por diseño.
+- **Mejora:** escalar N y repetir con seeds; re-ranking con cross-encoder entrenado (C6 §9-13) sobre el top-k; ensembles de prompts específicos por dominio. El Cuaderno C ya verifica la versión mínima del re-ranking.

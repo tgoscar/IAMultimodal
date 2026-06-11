@@ -1,24 +1,22 @@
 # Hoja de trazabilidad — Examen Parcial Virtual MCC225A
 
-> Exigida en la **sección 10** del enunciado. Debe estar lista **antes** del inicio del examen.
-> Los campos marcados con ⚠️ debes completarlos con tus valores reales después de ejecutar los cuadernos.
+> Sección 10 del enunciado. Lista **antes** del examen. ⚠️ = completar con tus valores reales tras ejecutar.
 
 | Elemento | Respuesta |
 |---|---|
 | **Paper, modelo o línea temática asignada** | CLIP — *Learning Transferable Visual Models From Natural Language Supervision* (Radford et al., 2021, arXiv:2103.00020) |
-| **URL del repositorio entregado** |  (https://github.com/tgoscar/IAMultimodal)
-| **Cuadernos usados** | C6 (bi-encoder contrastivo + re-ranking), C9 (OpenCLIP baseline sobre bootstrap Flickr30k), C10 (zero-shot, prompts, checkpoints, FAISS) |
-| **Notebook, script o archivo ejecutado** | `Cuaderno9-MCC225.ipynb` y `Cuaderno10-MCC225.ipynb` (principales); `scripts/02_build_embeddings.py`, `scripts/04_eval_zeroshot.py`, `scripts/05_compare_checkpoints.py`; `Cuaderno6-MCC225.ipynb` (contraste bi-encoder vs cross-encoder) |
-| **Celda, función o bloque de código clave** | C9 §6: `sim = image_features @ text_features.T` + `summarize_ranking(sim)` (Recall@K i2t/t2i). C10 §3: `compute_similarity_matrix` con evaluación multicaption. C10 §4: zero-shot con `prompt_config.json` |
-| **Resultado obtenido** | ⚠️ Recall@1/@5/@10 image→text = ___ / ___ / ___ ; text→image = ___ / ___ / ___ (ViT-B-32, laion2b_s34b_b79k, bootstrap Flickr30k). Accuracy zero-shot: prompt simple = ___ , ensemble = ___ |
-| **Métrica, tabla, gráfico o evidencia usada** | Tabla de Recall@K (`evidencias/metricas/`), tabla de hard negatives (`mine_hard_negatives`), matriz de confusión zero-shot, `checkpoint_comparison.csv`, ejemplos top-k de recuperación cruzada |
-| **Cambio hecho sobre el cuaderno original** | ⚠️ Ejemplos preparados en `scripts_extras/`: (1) prompt ensemble propio con plantillas adicionales; (2) función `recall_at_k` parametrizable; (3) comparación de un segundo checkpoint; (4) consulta textual nueva sobre el índice FAISS. *Declara aquí los que realmente hiciste.* |
-| **Limitación encontrada** | Bootstrap pequeño → varianza alta en Recall@K; el dual encoder falla en composición fina (hard negatives con score alto comparten objetos pero no relaciones); accuracy zero-shot sensible a la redacción del prompt |
-| **Mejora propuesta** | Escalar a subconjunto 512/128/128 de Flickr30k (`01_prepare_flickr30k_from_hf.py`) + re-ranking con cross-encoder (C6) sobre el top-10 del dual encoder; reportar media ± desviación con 3 seeds |
+| **URL del repositorio entregado** | ⚠️ `https://github.com/<tu-usuario>/repo-parcial-clip` |
+| **Cuadernos usados** | Base del curso: C6, C9, C10. Adaptados en tres cuadernos propios: A (embeddings + retrieval + hard negatives), B (zero-shot + prompts + checkpoints + búsqueda semántica), C (bi-encoder InfoNCE vs CLIP + re-ranking) |
+| **Notebook, script o archivo ejecutado** | `notebooks/CuadernoA_clip_embeddings_retrieval.ipynb`, `CuadernoB_zeroshot_prompts_checkpoints.ipynb`, `CuadernoC_biencoder_vs_clip_reranking.ipynb` |
+| **Celda, función o bloque de código clave** | A: `# 3. CELDA CLAVE` (`sim = image_features @ text_features.T` + `recall_at_k`). B: `# 3. CELDA CLAVE` (`class_embeddings` con ensemble y re-normalización). C: `contrastive_loss` (InfoNCE de CLIP) y `# 6. CELDA CLAVE` (tabla comparativa) |
+| **Resultado obtenido** | ⚠️ OpenCLIP ViT-B-32/laion2b sobre Flickr8k (N=200): i2t R@1/5/10 = __/__/__ ; t2i = __/__/__ . Zero-shot: prompt único = __, ensemble = __. Bi-encoder didáctico: R@1 = __ vs CLIP = __ |
+| **Métrica, tabla, gráfico o evidencia usada** | `evidencias/metricas/retrieval_recall.csv`, `retrieval_recall_multicaption.csv`, `checkpoint_comparison.csv`, `biencoder_vs_clip.csv`, `rerank_topk.csv`; `zeroshot/zeroshot_prompt_summary.csv` + matriz de confusión; `hard_negatives/hard_negatives.csv` + imagen; galerías top-k |
+| **Cambio hecho sobre el cuaderno original** | Cada cuaderno abre con su tabla de trazabilidad. Resumen: reimplementé `encode_*`/`recall_at_k`/`mine_hard_negatives` sin depender de `src/` del curso (C9); cambié el bootstrap Flickr30k por un subconjunto de Flickr8k con etiquetas operativas por keyword (C10); añadí plantillas propias al ensemble; sustituí el cross-reranker entrenado por re-ranking con CLIP preentrenado, verificable (C6 §13) |
+| **Limitación encontrada** | Subconjuntos pequeños → varianza alta en R@K; hard negatives revelan fallas de composición (estructural del dual encoder); etiquetas por keyword ruidosas; bi-encoder didáctico sub-entrenado por diseño |
+| **Mejora propuesta** | Escalar N y repetir con 3 seeds; entrenar el cross-reranker de C6 sobre el top-k (la versión mínima ya está verificada en Cuaderno C §7); ensembles de prompts por dominio |
 
 ## Declaración de herramientas
 
-⚠️ El enunciado penaliza (1–3 pts) el **uso no declarado de herramientas generativas**. Declara aquí
-cualquier asistencia de IA usada en la preparación del material (por ejemplo: "se utilizó un asistente
-de IA para organizar el repositorio y redactar borradores de respuestas; todo el código fue ejecutado
-y verificado personalmente").
+⚠️ El enunciado penaliza (1–3 pts) el uso **no declarado** de herramientas generativas. Ejemplo de declaración:
+"Se utilizó un asistente de IA para estructurar el repositorio y redactar borradores; todo el código fue
+ejecutado, verificado y comprendido personalmente; los resultados reportados provienen de mis ejecuciones."
