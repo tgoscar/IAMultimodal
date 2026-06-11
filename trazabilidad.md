@@ -6,7 +6,7 @@
 | Elemento | Respuesta |
 |---|---|
 | **Paper, modelo o línea temática asignada** | CLIP — *Learning Transferable Visual Models From Natural Language Supervision* (Radford et al., 2021, arXiv:2103.00020) |
-| **URL del repositorio entregado** |  [`[[https://github.com/<tu-usuario>/repo-examen-parcial-clip](https://github.com/tgoscar/IAMultimodal)](https://github.com/tgoscar/IAMultimodal)` |](https://github.com/tgoscar/IAMultimodal)
+| **URL del repositorio entregado** |  (https://github.com/tgoscar/IAMultimodal)
 | **Cuadernos usados** | C6 (bi-encoder contrastivo + re-ranking), C9 (OpenCLIP baseline sobre bootstrap Flickr30k), C10 (zero-shot, prompts, checkpoints, FAISS) |
 | **Notebook, script o archivo ejecutado** | `Cuaderno9-MCC225.ipynb` y `Cuaderno10-MCC225.ipynb` (principales); `scripts/02_build_embeddings.py`, `scripts/04_eval_zeroshot.py`, `scripts/05_compare_checkpoints.py`; `Cuaderno6-MCC225.ipynb` (contraste bi-encoder vs cross-encoder) |
 | **Celda, función o bloque de código clave** | C9 §6: `sim = image_features @ text_features.T` + `summarize_ranking(sim)` (Recall@K i2t/t2i). C10 §3: `compute_similarity_matrix` con evaluación multicaption. C10 §4: zero-shot con `prompt_config.json` |
