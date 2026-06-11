@@ -1,0 +1,12 @@
+torch>=2.0
+torchvision
+open_clip_torch>=2.20
+transformers>=4.35
+datasets>=2.14
+scikit-learn
+pandas
+numpy
+matplotlib
+tqdm
+# opcional (Cuaderno B tiene fallback numpy si falta):
+# faiss-cpu
