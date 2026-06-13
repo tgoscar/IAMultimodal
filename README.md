@@ -5,9 +5,7 @@
 **Cuadernos del curso usados como base:** C6, C9, C10
 **Tesis (Evaluación 1):** el dual-encoder contrastivo es una arquitectura escalable para transferencia zero-shot y recuperación imagen-texto.
 
-Este repositorio contiene **tres cuadernos propios**, construidos adaptando las partes relevantes de los
-cuadernos del curso. Cada cuaderno abre con su **tabla de trazabilidad**: de qué celda de C6/C9/C10
-proviene cada sección y qué se cambió (responde directamente a las preguntas 2, 3 y 4 de la sección 7 del enunciado).
+
 
 ## Qué hace cada cuaderno
 
