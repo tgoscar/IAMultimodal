@@ -1,5 +1,5 @@
 # Examen Parcial Virtual — MCC225A
-## (Radford et al., 2021 — arXiv:2103.00020)
+## Radford et al., 2021 — arXiv:2103.00020
 
 **Estudiante:** Oscar Benito Toledo Guerrero
 **Cuadernos del curso usados como base:** C6, C9, C10
