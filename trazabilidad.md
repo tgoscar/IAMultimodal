@@ -11,7 +11,6 @@
 | **Resultado obtenido** | ⚠️ OpenCLIP ViT-B-32/laion2b sobre Flickr8k (N=200): i2t R@1/5/10 = __/__/__ ; t2i = __/__/__ . Zero-shot: prompt único = __, ensemble = __. Bi-encoder didáctico: R@1 = __ vs CLIP = __ |
 | **Métrica, tabla, gráfico o evidencia usada** | `evidencias/metricas/retrieval_recall.csv`, `retrieval_recall_multicaption.csv`, `checkpoint_comparison.csv`, `biencoder_vs_clip.csv`, `rerank_topk.csv`; `zeroshot/zeroshot_prompt_summary.csv` + matriz de confusión; `hard_negatives/hard_negatives.csv` + imagen; galerías top-k |
 
-| **Limitación encontrada** | Subconjuntos pequeños → varianza alta en R@K; hard negatives revelan fallas de composición (estructural del dual encoder); etiquetas por keyword ruidosas; bi-encoder didáctico sub-entrenado por diseño |
-| **Mejora propuesta** | Escalar N y repetir con 3 seeds; entrenar el cross-reranker de C6 sobre el top-k (la versión mínima ya está verificada en Cuaderno C §7); ensembles de prompts por dominio |
+
 
 
