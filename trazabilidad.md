@@ -14,8 +14,4 @@
 | **Limitación encontrada** | Subconjuntos pequeños → varianza alta en R@K; hard negatives revelan fallas de composición (estructural del dual encoder); etiquetas por keyword ruidosas; bi-encoder didáctico sub-entrenado por diseño |
 | **Mejora propuesta** | Escalar N y repetir con 3 seeds; entrenar el cross-reranker de C6 sobre el top-k (la versión mínima ya está verificada en Cuaderno C §7); ensembles de prompts por dominio |
 
-## Declaración de herramientas
 
-⚠️ El enunciado penaliza (1–3 pts) el uso **no declarado** de herramientas generativas. Ejemplo de declaración:
-"Se utilizó un asistente de IA para estructurar el repositorio y redactar borradores; todo el código fue
-ejecutado, verificado y comprendido personalmente; los resultados reportados provienen de mis ejecuciones."
