@@ -9,29 +9,6 @@ Este repositorio contiene **tres cuadernos propios**, construidos adaptando las 
 cuadernos del curso. Cada cuaderno abre con su **tabla de trazabilidad**: de qué celda de C6/C9/C10
 proviene cada sección y qué se cambió (responde directamente a las preguntas 2, 3 y 4 de la sección 7 del enunciado).
 
----
-
-## Estructura
-
-```
-repo-parcial-clip/
-├── README.md
-├── trazabilidad.md              ← hoja exigida en la sección 10 del enunciado
-├── requirements.txt
-├── notebooks/
-│   ├── CuadernoA_clip_embeddings_retrieval.ipynb
-│   ├── CuadernoB_zeroshot_prompts_checkpoints.ipynb
-│   └── CuadernoC_biencoder_vs_clip_reranking.ipynb
-├── outputs/                     ← embeddings .npz (lo genera el Cuaderno A)
-├── evidencias/                  ← CSVs y PNGs (los generan los cuadernos automáticamente)
-│   ├── metricas/  graficos/  rankings/  hard_negatives/  zeroshot/
-└── defensa/
-    ├── guion_defensa_13min.md
-    ├── respuestas_clip_seccion_8_2.md
-    ├── respuestas_preguntas_generales.md
-    └── mejoras_codigo_en_vivo.md
-```
-
 ## Qué hace cada cuaderno
 
 | Cuaderno | Base | Contenido | Evidencia que produce |
