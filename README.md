@@ -1,7 +1,7 @@
 # Examen Parcial Virtual — MCC225A
 ## Radford et al., 2021 — arXiv:2103.00020
 
-**Estudiante:** Oscar Benito Toledo Guerrero
+**Estudiante:** Oscar Benito Toledo Guerrero \\
 **Cuadernos del curso usados como base:** C6, C9, C10
 **Tesis (Evaluación 1):** el dual-encoder contrastivo es una arquitectura escalable para transferencia zero-shot y recuperación imagen-texto.
 
